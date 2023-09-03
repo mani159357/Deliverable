@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Expense Tracker</title>
+</head>
+<body>
+    <header id="main-header" class="bg-success text-white p-4 mb-3">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-6">
+                <h1 id="header-title">Expenses</h1>
+            </div>
+          </div>
+        </div>
+      </header>
+      <div class="container">it
+       <div id="main" class="card card-body">
+        <form id="addForm" class="form-inline mb-3">
+          <label>Choose Expenseamount :- </label>
+          <input type="number" class="form-control mr-2" id="item1">
+          <label>Choose Description :-</label>
+          <input type="text" class="form-control mr-2" id="item2">
+          <label>Choose Category :- </label>
+          <input type="text" class="form-control mr-2" id="item3">
+          <!-- <select name="Choose Category" class="form-control mr-2" id="item 3">
+            <option value="">-Select Category-</option>
+            <option value="Food">Food</option>
+            <option value="Fuel">Fuel</option>
+            <option value="Electricity">Electricity</option>
+            <option value="Movies">Movies</option>
+        </select> -->
+          <input type="submit" class="btn btn-dark" value="Submit">
+        </form>
+        <h2 class="title">Expenses Details</h2>
+        <ul id="items" class="list-group">
+          <!-- <li class="list-group-item">Item 1 <button class="btn btn-danger btn-sm float-right delete">X</button></li>
+          <li class="list-group-item">Item 2 <button class="btn btn-danger btn-sm float-right delete">X</button></li>
+          <li class="list-group-item">Item 3 <button class="btn btn-danger btn-sm float-right delete">X</button></li>
+          <li class="list-group-item">Item 4 <button class="btn btn-danger btn-sm float-right delete">X</button></li> -->
+        </ul>
+       </div>
+      </div>
+  <script>
+    
+var form = document.getElementById('addForm');
+var itemList = document.getElementById('items');
+var filter = document.getElementById('filter');
+
+// Form submit event
+form.addEventListener('submit', addItem);
+// Delete event
+itemList.addEventListener('click', removeItem);
+// Filter event
+filter.addEventListener('keyup', filterItems);
+
+
+// object creation
+function details(amount,description,category)
+{
+  this.expenseamount=amount
+  this.description=description
+  this.category=category
+}
+
+
+// Add item
+function addItem(e){
+  e.preventDefault();
+
+  
+  // Get input value
+  var newItem1 = document.getElementById('item1').value;
+  var newItem2 = document.getElementById('item2').value;
+  var newItem3 = document.getElementById('item3').value;
+
+  //adding data to local storage through Object
+  var data = new details(newItem1,newItem2,newItem3)
+
+  //Serialising the object data
+  let obj_serialised = JSON.stringify(data)
+  // console.log(obj_serialised)
+
+  //deserialising the object data   localStorage.getItem("data")
+  let obj_deserialised = JSON.parse(obj_serialised)
+  console.log(obj_deserialised)
+
+  // var app="details"+(i++)
+
+  //storing in Local Storage
+  localStorage.setItem(newItem1,obj_serialised)
+
+  //adding new list for making the deletion in local storage '-'
+  var lii = document.createElement("li")
+  lii.classname="list-group-item inner"
+  lii.appendChild(document.createTextNode(newItem1))
+
+  // Create new li element
+  var li = document.createElement('li');
+
+  // Add class
+  li.className = 'list-group-item';
+
+  // Add text node with input value
+  li.appendChild(lii)
+  li.appendChild(document.createTextNode(newItem2));
+ 
+  li.appendChild(document.createTextNode("-"));
+  li.appendChild(document.createTextNode(newItem3));
+
+  // Create del button element
+  var deleteBtn = document.createElement('button');
+
+  // Add classes to del button
+  deleteBtn.className = 'btn btn-danger btn-sm float-right delete';
+
+  // Append text node
+  deleteBtn.appendChild(document.createTextNode('Delete'));
+
+  // Append button to li
+  li.appendChild(deleteBtn);
+
+  // Append li to list
+  itemList.appendChild(li);
+
+
+  // creating edit button
+  var editbtn=document.createElement("button")
+
+  editbtn.style.backgroundColor="green"
+
+  editbtn.className="btn btn-danger btn-sm float-right delete edit"
+
+  editbtn.appendChild(document.createTextNode("Edit"))
+
+  li.append(editbtn)
+
+  itemList.appendChild(li)
+
+  //clearing contents of form
+  //   var all=documnet.querySelectorAll(".form-control")
+  form.reset();
+
+}
+
+// Remove item
+function removeItem(e){
+  if(e.target.classList.contains('delete')){
+    if(confirm('Are You Sure?')){
+      if(e.target.classList.contains('edit'))
+      {
+      var li = e.target.parentElement;
+      var mydoubt=li.firstElementChild.textContent
+      // console.log(mydoubt)
+      // var preval=localStorage.getItem(mydoubt)
+      console.log(mydoubt)
+
+      const storedData = localStorage.getItem(mydoubt);
+
+      // Check if the data exists in localStorage
+      if (storedData) 
+      {
+        // Parse the stored data if it's in JSON format
+        const parsedData = JSON.parse(storedData);
+
+        document.getElementById("item1").value=parsedData.expenseamount
+        document.getElementById("item2").value=parsedData.description
+        document.getElementById("item3").value=parsedData.category
+        
+        // Access the properties using dot notation
+        console.log(parsedData.expenseamount); // Output: 'MANI KANTH BOLEM'
+        console.log(parsedData.description); // Output: 'manibolem324@gmail.com'
+        console.log(parsedData.category);
+      } 
+      else 
+      {
+        console.log("Data not found in localStorage with the key 'getName'");
+      }
+
+      itemList.removeChild(li)
+      localStorage.removeItem(mydoubt)
+     }
+     else{
+      var li = e.target.parentElement;
+      var mydoubt=li.firstElementChild.textContent
+      console.log(mydoubt)
+      itemList.removeChild(li)
+      localStorage.removeItem(mydoubt)
+     }
+    }
+  }
+}
+
+
+  </script>
+</body>
+</html>
+
