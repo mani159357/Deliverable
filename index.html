@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
   <title>Expense Tracker</title>
 </head>
 <body>
@@ -19,12 +20,18 @@
       <div class="container">
        <div id="main" class="card card-body">
         <form id="addForm" class="form-inline mb-3">
+          <div>
           <label>Choose Expenseamount :- </label>
           <input type="number" class="form-control mr-2" id="item1">
+        </div>
+        <div>
           <label>Choose Description :-</label>
           <input type="text" class="form-control mr-2" id="item2">
+        </div>
+        <div>
           <label>Choose Category :- </label>
           <input type="text" class="form-control mr-2" id="item3">
+        </div>
           <!-- <select name="Choose Category" class="form-control mr-2" id="item 3">
             <option value="">-Select Category-</option>
             <option value="Food">Food</option>
@@ -36,10 +43,6 @@
         </form>
         <h2 class="title">Expenses Details</h2>
         <ul id="items" class="list-group">
-          <!-- <li class="list-group-item">Item 1 <button class="btn btn-danger btn-sm float-right delete">X</button></li>
-          <li class="list-group-item">Item 2 <button class="btn btn-danger btn-sm float-right delete">X</button></li>
-          <li class="list-group-item">Item 3 <button class="btn btn-danger btn-sm float-right delete">X</button></li>
-          <li class="list-group-item">Item 4 <button class="btn btn-danger btn-sm float-right delete">X</button></li> -->
         </ul>
        </div>
       </div>
@@ -55,6 +58,74 @@ form.addEventListener('submit', addItem);
 itemList.addEventListener('click', removeItem);
 // Filter event
 // filter.addEventListener('keyup', filterItems);
+
+//loading the page
+window.addEventListener('load', function () {
+  loadApplicantsFromLocalStorage();
+});
+
+// Function to load applicants from localStorage
+function loadApplicantsFromLocalStorage() {
+  for (var i = 0; i < localStorage.length; i++) {
+    var key = localStorage.key(i);
+    if (key.startsWith('price_')) {
+      var storedData = JSON.parse(localStorage.getItem(key));
+      addItemToApplicantsList(storedData.expenseamount, storedData.description,storedData.category);
+    }
+  }
+}
+
+//Funtion to add Applicants data to the List
+function addItemToApplicantsList(newItem1,newItem2,newItem3){
+  var lii = document.createElement("li")
+  lii.classname="list-group-item inner"
+  lii.appendChild(document.createTextNode(newItem1))
+
+  // Create new li element
+  var li = document.createElement('li');
+
+  // Add class
+  li.className = 'list-group-item';
+
+  // Add text node with input value
+  li.appendChild(lii)
+  li.appendChild(document.createTextNode(newItem2));
+
+  li.appendChild(document.createTextNode("-"));
+  li.appendChild(document.createTextNode(newItem3));
+
+    // Create del button element
+    var deleteBtn = document.createElement('button');
+
+    // Add classes to del button
+    deleteBtn.className = 'btn btn-danger btn-sm float-right delete';
+  
+    // Append text node
+    deleteBtn.appendChild(document.createTextNode('Delete'));
+  
+    // Append button to li
+    li.appendChild(deleteBtn);
+  
+    // Append li to list
+    itemList.appendChild(li);
+  
+  
+    // creating edit button
+    var editbtn=document.createElement("button")
+  
+    editbtn.style.backgroundColor="green"
+  
+    editbtn.className="btn btn-danger btn-sm float-right delete edit"
+  
+    editbtn.appendChild(document.createTextNode("Edit"))
+  
+    li.append(editbtn)
+  
+    itemList.appendChild(li)
+
+    form.reset();
+}
+
 
 
 // object creation
@@ -87,61 +158,13 @@ function addItem(e){
   let obj_deserialised = JSON.parse(obj_serialised)
   console.log(obj_deserialised)
 
-  // var app="details"+(i++)
+  
 
   //storing in Local Storage
-  localStorage.setItem(newItem1,obj_serialised)
+  localStorage.setItem('price_'+newItem1,obj_serialised)
 
-  //adding new list for making the deletion in local storage '-'
-  var lii = document.createElement("li")
-  lii.classname="list-group-item inner"
-  lii.appendChild(document.createTextNode(newItem1))
-
-  // Create new li element
-  var li = document.createElement('li');
-
-  // Add class
-  li.className = 'list-group-item';
-
-  // Add text node with input value
-  li.appendChild(lii)
-  li.appendChild(document.createTextNode(newItem2));
- 
-  li.appendChild(document.createTextNode("-"));
-  li.appendChild(document.createTextNode(newItem3));
-
-  // Create del button element
-  var deleteBtn = document.createElement('button');
-
-  // Add classes to del button
-  deleteBtn.className = 'btn btn-danger btn-sm float-right delete';
-
-  // Append text node
-  deleteBtn.appendChild(document.createTextNode('Delete'));
-
-  // Append button to li
-  li.appendChild(deleteBtn);
-
-  // Append li to list
-  itemList.appendChild(li);
-
-
-  // creating edit button
-  var editbtn=document.createElement("button")
-
-  editbtn.style.backgroundColor="green"
-
-  editbtn.className="btn btn-danger btn-sm float-right delete edit"
-
-  editbtn.appendChild(document.createTextNode("Edit"))
-
-  li.append(editbtn)
-
-  itemList.appendChild(li)
-
-  //clearing contents of form
-  //   var all=documnet.querySelectorAll(".form-control")
-  form.reset();
+  //fcalling function for adding contents to list
+  addItemToApplicantsList(newItem1,newItem2,newItem3)
 
 }
 
@@ -157,7 +180,7 @@ function removeItem(e){
       // var preval=localStorage.getItem(mydoubt)
       console.log(mydoubt)
 
-      const storedData = localStorage.getItem(mydoubt);
+      const storedData = localStorage.getItem('price_'+mydoubt);
 
       // Check if the data exists in localStorage
       if (storedData) 
@@ -187,7 +210,7 @@ function removeItem(e){
       var mydoubt=li.firstElementChild.textContent
       console.log(mydoubt)
       itemList.removeChild(li)
-      localStorage.removeItem(mydoubt)
+      localStorage.removeItem('price_'+mydoubt)
      }
     }
   }
